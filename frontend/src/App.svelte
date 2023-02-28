@@ -1,15 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { v4 as uuidv4 } from 'uuid';
-
+  import axios from "axios"
   interface Message {
     text: string,
     date: number,
-    id: string
+    id: string,
+    // token: string
   }
 
   let client_id;
-
+  let token;
   let message: string;
   let messages: Message[] = [];
 
@@ -30,8 +31,10 @@ function handleButtonClick() {
     socket.addEventListener("message", (event) => {
       console.log(`Received message: ${event.data}`);
       let msgObject = JSON.parse(event.data);
-      console.log(msgObject);
-
+      if (msgObject.token) {
+        console.log(msgObject.token);
+        token = msgObject.token;
+      }
       console.log(msgObject.id);
       
       // TODO: implement closing
@@ -53,20 +56,36 @@ function handleButtonClick() {
 
     // Define a function to send a message over the websocket
     function sendMessage() {
-
       const sendingMsg: Message = {
         text: message,
         date: Date.now(),
-        id: client_id
+        id: client_id,
+        // token: token
       }
       socket.send(JSON.stringify(sendingMsg));
       message = ""
     }
 
-  onMount(()=>{
+  
+    async function createARoom() {
+      // const data = await axios.post("http://127.0.0.1:8000/create/room")
+      axios.post('http://127.0.0.1:8000/create/room', {id: client_id})
+        .then(function (response) {
+          // handle success
+          console.log(response);
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        })
+      // const data = await axios.get("http://127.0.0.1:8000/")
+      // console.log(data);      
+    }
+
+  onMount(async ()=>{
     client_id = uuidv4();
     console.log(client_id);
-    
+    // createARoom();
   })
 
 </script>
@@ -79,7 +98,7 @@ function handleButtonClick() {
     </div>
     {:else}
     <div class=" my-10">
-      <button on:click={()=>handleButtonClick()} class="btn-primary">Create a socket</button>
+      <button on:click={()=>handleButtonClick()} class="btn-primary">Create a room</button>
     </div>
   {/if}
 
@@ -100,16 +119,6 @@ function handleButtonClick() {
   </div>
 </div>
 
-
-  <div class="my-20">
-    {#each messages as msg}
-      <p>{msg.text}</p>
-    {:else}
-      <p>No messages today!</p>
-    {/each}
-  </div>
-
-  {isSocketConnectionEstablished ? "CONNECTED" : "NOT CONNECTED"}
 
 </main>
 
