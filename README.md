@@ -1,6 +1,8 @@
-# Sequre
+# Sequre Messenger
 
-Welcome to Sequre, the open-source messaging platform that leverages the power of quantum algorithms to provide unmatched security and privacy for all your conversations. 
+Welcome to Sequre, the open-source messaging platform that leverages the power of quantum algorithms to provide unmatched security and privacy for all your conversations!
+
+## Quantum Part
 
 Sequre employs Bell's |Φ+⟩  state to generate two random keys for identity verification every time two users want to chat.
 
@@ -18,7 +20,7 @@ If two users’ qubits are indeed entangled and QEC works, the keys happen to be
 
 The following histogram illustrates the probability distribution of states after 1024 experiments:
 
-<img width="305" alt="image" src="https://user-images.githubusercontent.com/122756262/221971254-645712d5-3c70-4630-8125-72a506e2feb4.png">
+<img width="353" alt="Снимок экрана 2023-02-28 в 3 50 08 PM" src="https://user-images.githubusercontent.com/122756262/221976652-76d5628c-c441-4bff-a52e-4dec3a957a9c.png">
 
 Only states |011> and |000> participate in key-generation. Because the errors are significant, 
 the probabilities of measuring system in |101> and |110> is higher than in “useful” states
