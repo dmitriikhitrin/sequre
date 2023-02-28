@@ -2,7 +2,6 @@ from qiskit import QuantumCircuit
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from math import pi
 from qiskit import Aer, execute
-from qiskit.tools.visualization import plot_histogram, plot_state_city
 import random
 
 def binaryToDecimal(binary):
@@ -86,10 +85,6 @@ def getPrivateKeys(userIn, userEn, QECQubit, keyLength):
 
     return keyIn, keyEn
     
-    
-#     qc.draw('mpl')
-#     plot_histogram(count)
-    return (keyIn, keyEn)
 
 result = getPrivateKeys(0, 1, 3, 16)
 print(result)
