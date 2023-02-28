@@ -12,8 +12,13 @@ class WebSocketConnectionManager:
             return 500
         self.active_connections.append(ws)
 
-    def disconnect(self, ws: WebSocket):
-        self.active_connections.remove(ws)
+    async def disconnect(self):
+        for connection in self.active_connections:
+            self.active_connections.remove(connection)
+
+        for connection in self.active_connections:
+            await connection.close()
+
     
     async def broadcast(self, message: str):
         for connection in self.active_connections:
@@ -36,5 +41,5 @@ async def websocket_endpoint(websocket: WebSocket):
             print(data)
             await mananger.broadcast(data)
     except WebSocketDisconnect:
-        mananger.disconnect(websocket)
-        await mananger.broadcast(json.dumps({"text": "aborted"}))
+        await mananger.disconnect()
+        # await mananger.broadcast(json.dumps({"text": "aborted"}))
