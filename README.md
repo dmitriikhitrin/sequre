@@ -1,6 +1,8 @@
 # Sequre Messenger
 
-Welcome to Sequre, the open-source messaging platform that leverages the power of quantum algorithms to provide unmatched security and privacy for all your conversations!
+### Welcome to Sequre, the open-source messaging platform that leverages the power of quantum algorithms to provide unmatched security and privacy for all your conversations!
+
+<img width="500" alt="Снимок экрана 2023-02-28 в 4 02 43 PM" src="https://user-images.githubusercontent.com/122756262/221979061-a8a46c61-edac-4373-98f1-b8c30631a03f.png">
 
 ## Quantum Part
 
