@@ -1,7 +1,7 @@
 from qiskit import QuantumCircuit
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from math import pi
-from qiskit import Aer, execute
+from qiskit_aer import AerSimulator
 import random
 
 def binaryToDecimal(binary):
@@ -16,8 +16,8 @@ def binaryToDecimal(binary):
 def createCircuit(numUsers, QECQubits, registers):
     users = QuantumRegister(numUsers, "user")
     ancillas = QuantumRegister(QECQubits, "ancilla")
-    cr = ClassicalRegister(registers, 'c')
-    qc = QuantumCircuit(users, ancillas, cr)
+    meas = ClassicalRegister(registers, 'measure')
+    qc = QuantumCircuit(users, ancillas, meas)
     return qc
 
 numUsers = 3
@@ -46,6 +46,12 @@ def errorX(qc, userIn, userEn):
 def errorCorrection(qc, userIn, userEn, QECQubit):
     qc.cnot(userIn, QECQubit)
     qc.cnot(userEn, QECQubit)
+    qc.barrier()
+    
+    qc.measure(QECQubit, 2)
+    with qc.if_test((2, 1)):
+        qc.x(userIn)
+        
     return qc
 
 def getPrivateKeys(userIn, userEn, QECQubit, keyLength):
@@ -57,22 +63,21 @@ def getPrivateKeys(userIn, userEn, QECQubit, keyLength):
     
     qc = errorCorrection(qc, userIn, userEn, QECQubit)
     qc.barrier()
-    qc.measure([userIn, userEn, QECQubit], [0,1,2])
+    qc.measure([userIn, userEn], [0,1])
     
     lstIn = []
     lstEn = []
     counts = []
     
-    
     while len(lstEn) <= keyLength:
-        backend = Aer.get_backend('qasm_simulator')
-        job_sim = execute(qc, backend, shots = 1)
-        result = job_sim.result()
-        count = result.get_counts(qc)
+        sim = AerSimulator() 
+        job = sim.run(qc, shots=1)
+        result = job.result()
+        count = result.get_counts()
         counts.append(count)
-        if (int(list(count.keys())[0][0]) == 0):
-            lstIn.append(list(count.keys())[0][registers-userIn-1])
-            lstEn.append(list(count.keys())[0][registers-userEn-1])
+       
+        lstIn.append(list(count.keys())[0][registers-userIn-1])
+        lstEn.append(list(count.keys())[0][registers-userEn-1])
 
     
     if (len(lstIn) != 0 and len(lstEn) != 0):
@@ -84,7 +89,3 @@ def getPrivateKeys(userIn, userEn, QECQubit, keyLength):
         keyEn = binaryToDecimal(int("".join(lstEn)))
 
     return keyIn, keyEn
-    
-
-result = getPrivateKeys(0, 1, 3, 16)
-print(result)
